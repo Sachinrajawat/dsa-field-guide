@@ -21,8 +21,17 @@ export function bfs(grid, start, end) {
   const startKey = key(...start)
   const endKey = key(...end)
 
+  const L = { POP: 4, END_CHECK: 5, NEIGHBOR: 7, PUSH: 10 }
+
   const steps = [
-    { type: 'init', current: null, visited: [], frontier: [startKey], path: null },
+    {
+      type: 'init',
+      current: null,
+      visited: [],
+      frontier: [startKey],
+      path: null,
+      line: -1,
+    },
   ]
 
   const visited = new Set([startKey])
@@ -42,6 +51,7 @@ export function bfs(grid, start, end) {
       visited: [...visitedOrder],
       frontier: queue.map(([qr, qc]) => key(qr, qc)),
       path: null,
+      line: L.POP,
     })
 
     if (k === endKey) {
@@ -76,6 +86,7 @@ export function bfs(grid, start, end) {
       visited: [...visitedOrder],
       frontier: [],
       path,
+      line: -1,
     })
   } else {
     steps.push({
@@ -84,6 +95,7 @@ export function bfs(grid, start, end) {
       visited: [...visitedOrder],
       frontier: [],
       path: null,
+      line: -1,
     })
   }
 

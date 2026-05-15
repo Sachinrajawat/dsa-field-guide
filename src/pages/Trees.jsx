@@ -9,6 +9,8 @@ import {
 import { usePlayback } from '../hooks/usePlayback.js'
 import AlgorithmPage from '../components/AlgorithmPage.jsx'
 import TreeVisualizer from '../components/TreeVisualizer.jsx'
+import StatsBadge from '../components/StatsBadge.jsx'
+import { TREE_FIELDS } from '../components/StatsBadge.fields.js'
 
 const ORDERS = [
   { id: 'in', label: 'In-order' },
@@ -64,6 +66,13 @@ export default function Trees() {
         </div>
       }
     >
+      <div className="mb-3 flex justify-end">
+        <StatsBadge
+          steps={steps}
+          index={playback.index}
+          fields={TREE_FIELDS}
+        />
+      </div>
       <TreeVisualizer root={root} step={playback.step} />
     </AlgorithmPage>
   )

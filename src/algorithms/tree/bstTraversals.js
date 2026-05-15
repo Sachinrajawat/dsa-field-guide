@@ -66,10 +66,16 @@ export function layoutTree(root) {
   return { nodes, edges, width: counter, height: maxDepth + 1 }
 }
 
+// Pseudocode lines per traversal order — keeps highlighting tight to the
+// "visit(node)" line for the active order.
+const VISIT_LINE = { pre: 3, in: 5, post: 7 }
+
 export function bstTraverse(root, order) {
   const visited = []
   const result = []
-  const steps = [{ type: 'init', currentId: null, visited: [], result: [] }]
+  const steps = [
+    { type: 'init', currentId: null, visited: [], result: [], line: -1 },
+  ]
 
   function visit(node) {
     visited.push(node.id)
@@ -79,6 +85,7 @@ export function bstTraverse(root, order) {
       currentId: node.id,
       visited: [...visited],
       result: [...result],
+      line: VISIT_LINE[order],
     })
   }
 
@@ -97,6 +104,7 @@ export function bstTraverse(root, order) {
     currentId: null,
     visited: [...visited],
     result: [...result],
+    line: -1,
   })
   return steps
 }

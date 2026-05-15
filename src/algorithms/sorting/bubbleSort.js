@@ -16,6 +16,9 @@ export function bubbleSort(input) {
   const n = arr.length
   const sorted = new Set()
 
+  // Pseudocode line indices (matches the `pseudocode` string below).
+  const L = { OUTER: 1, INNER: 2, IF: 3, SWAP: 4 }
+
   const steps = [
     {
       type: 'init',
@@ -23,6 +26,7 @@ export function bubbleSort(input) {
       comparing: [],
       active: [],
       sortedIndices: [],
+      line: -1,
     },
   ]
 
@@ -35,6 +39,7 @@ export function bubbleSort(input) {
         comparing: [j, j + 1],
         active: [],
         sortedIndices: [...sorted],
+        line: L.IF,
       })
 
       if (arr[j] > arr[j + 1]) {
@@ -46,6 +51,7 @@ export function bubbleSort(input) {
           comparing: [],
           active: [j, j + 1],
           sortedIndices: [...sorted],
+          line: L.SWAP,
         })
       }
     }
@@ -56,6 +62,7 @@ export function bubbleSort(input) {
       comparing: [],
       active: [],
       sortedIndices: [...sorted],
+      line: L.OUTER,
     })
     if (!swappedAny) break
   }
@@ -67,6 +74,7 @@ export function bubbleSort(input) {
     comparing: [],
     active: [],
     sortedIndices: [...sorted],
+    line: -1,
   })
 
   return steps

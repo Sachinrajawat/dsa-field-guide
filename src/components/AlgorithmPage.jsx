@@ -1,6 +1,8 @@
 import PseudocodePanel from './PseudocodePanel.jsx'
 import AlgorithmInfo from './AlgorithmInfo.jsx'
 import PlaybackControls from './PlaybackControls.jsx'
+import KeyboardHelp from './KeyboardHelp.jsx'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts.js'
 
 // Shared three-column layout used by every algorithm page.
 //
@@ -18,6 +20,10 @@ export default function AlgorithmPage({
   topToolbar = null,
   children,
 }) {
+  const { showHelp, setShowHelp } = useKeyboardShortcuts(playback, {
+    onGenerate,
+  })
+
   return (
     <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-8 pb-32 lg:pb-8">
       {/* Page title — like a chapter header */}
@@ -31,6 +37,14 @@ export default function AlgorithmPage({
         <div className="hidden sm:flex items-center gap-2 font-mono text-xs text-muted">
           <span className="ink-tag">time {meta.time}</span>
           <span className="ink-tag">space {meta.space}</span>
+          <button
+            type="button"
+            onClick={() => setShowHelp(true)}
+            className="ink-tag hover:bg-ink hover:text-bg transition-colors"
+            title="Keyboard shortcuts"
+          >
+            ? shortcuts
+          </button>
         </div>
       </div>
 
@@ -38,7 +52,10 @@ export default function AlgorithmPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-[15rem_1fr_18rem] gap-px bg-rule border border-rule">
         <div className="hidden lg:block">
-          <PseudocodePanel code={meta.pseudocode} />
+          <PseudocodePanel
+            code={meta.pseudocode}
+            activeLine={playback.step?.line ?? -1}
+          />
         </div>
 
         <div className="bg-surface p-5 sm:p-6 min-h-[360px] flex flex-col">
@@ -60,7 +77,10 @@ export default function AlgorithmPage({
           Pseudocode
         </summary>
         <div className="border-t border-rule">
-          <PseudocodePanel code={meta.pseudocode} />
+          <PseudocodePanel
+            code={meta.pseudocode}
+            activeLine={playback.step?.line ?? -1}
+          />
         </div>
       </details>
 
@@ -68,6 +88,8 @@ export default function AlgorithmPage({
       <div className="lg:hidden fixed left-0 right-0 bottom-0 border-t border-rule bg-surface px-4 py-3 z-30">
         <PlaybackControls {...playback} onGenerate={onGenerate} />
       </div>
+
+      <KeyboardHelp open={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   )
 }

@@ -11,6 +11,8 @@ export function mergeSort(input) {
   const aux = [...arr]
   const sorted = new Set()
 
+  const L = { GUARD: 2, MID: 3, LEFT: 4, RIGHT: 5, MERGE: 6 }
+
   const steps = [
     {
       type: 'init',
@@ -18,6 +20,7 @@ export function mergeSort(input) {
       comparing: [],
       active: [],
       sortedIndices: [],
+      line: -1,
     },
   ]
 
@@ -41,6 +44,7 @@ export function mergeSort(input) {
         sortedIndices: [...sorted],
         rangeStart: lo,
         rangeEnd: hi,
+        line: L.MERGE,
       })
     }
   }
@@ -58,9 +62,9 @@ export function mergeSort(input) {
       sortedIndices: [...sorted],
       rangeStart: lo,
       rangeEnd: hi,
+      line: L.MERGE,
     })
     merge(lo, mid, hi)
-    // After a merge that covers the whole array, every index is sorted.
     if (lo === 0 && hi === arr.length - 1) {
       for (let k = 0; k < arr.length; k++) sorted.add(k)
       steps.push({
@@ -69,6 +73,7 @@ export function mergeSort(input) {
         comparing: [],
         active: [],
         sortedIndices: [...sorted],
+        line: -1,
       })
     }
   }
@@ -81,6 +86,7 @@ export function mergeSort(input) {
     comparing: [],
     active: [],
     sortedIndices: arr.map((_, i) => i),
+    line: -1,
   })
 
   return steps

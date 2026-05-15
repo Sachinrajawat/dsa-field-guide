@@ -6,6 +6,15 @@ export function quickSort(input) {
   const n = arr.length
   const sorted = new Set()
 
+  // Pseudocode line indices into quickSortMeta.pseudocode below.
+  const L = {
+    PARTITION_CALL: 3,
+    LOOP: 10,
+    IF: 11,
+    INNER_SWAP: 13,
+    PIVOT_SWAP: 14,
+  }
+
   const steps = [
     {
       type: 'init',
@@ -13,6 +22,7 @@ export function quickSort(input) {
       comparing: [],
       active: [],
       sortedIndices: [],
+      line: -1,
     },
   ]
 
@@ -27,6 +37,7 @@ export function quickSort(input) {
         active: [],
         pivotIndex,
         sortedIndices: [...sorted],
+        line: L.IF,
       })
       if (arr[j] <= arr[pivotIndex]) {
         i++
@@ -39,6 +50,7 @@ export function quickSort(input) {
             active: [i, j],
             pivotIndex,
             sortedIndices: [...sorted],
+            line: L.INNER_SWAP,
           })
         }
       }
@@ -52,6 +64,7 @@ export function quickSort(input) {
         active: [i + 1, hi],
         pivotIndex: i + 1,
         sortedIndices: [...sorted],
+        line: L.PIVOT_SWAP,
       })
     }
     sorted.add(i + 1)
@@ -61,6 +74,7 @@ export function quickSort(input) {
       comparing: [],
       active: [],
       sortedIndices: [...sorted],
+      line: L.PARTITION_CALL,
     })
     return i + 1
   }
@@ -75,6 +89,7 @@ export function quickSort(input) {
         comparing: [],
         active: [],
         sortedIndices: [...sorted],
+        line: -1,
       })
       return
     }
@@ -92,6 +107,7 @@ export function quickSort(input) {
     comparing: [],
     active: [],
     sortedIndices: [...sorted],
+    line: -1,
   })
 
   return steps

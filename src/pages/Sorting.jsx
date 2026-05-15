@@ -8,6 +8,8 @@ import { quickSort, quickSortMeta } from '../algorithms/sorting/quickSort.js'
 import { usePlayback } from '../hooks/usePlayback.js'
 import AlgorithmPage from '../components/AlgorithmPage.jsx'
 import SortVisualizer from '../components/SortVisualizer.jsx'
+import StatsBadge from '../components/StatsBadge.jsx'
+import { SORTING_FIELDS } from '../components/StatsBadge.fields.js'
 
 const ALGOS = {
   bubble: { fn: bubbleSort, meta: bubbleSortMeta },
@@ -19,21 +21,62 @@ const VARIANT_LINKS = [
   { id: 'bubble', label: 'Bubble' },
   { id: 'merge', label: 'Merge' },
   { id: 'quick', label: 'Quick' },
+  { id: 'race', label: 'Race' },
 ]
 
 const MAX_VALUE = 100
 const MAX_SIZE = 50
 const MIN_SIZE = 5
 
-function makeArray(size, seed) {
-  // Deterministic pseudo-random so refresh doesn't churn unrelated state.
+const PRESETS = [
+  { id: 'random', label: 'Random' },
+  { id: 'sorted', label: 'Sorted' },
+  { id: 'reversed', label: 'Reversed' },
+  { id: 'few', label: 'Few unique' },
+]
+
+function rng(seed) {
   let s = (seed * 9301 + 49297) % 233280
-  const out = []
-  for (let i = 0; i < size; i++) {
+  return () => {
     s = (s * 9301 + 49297) % 233280
-    out.push(3 + Math.floor((s / 233280) * (MAX_VALUE - 3)))
+    return s / 233280
   }
-  return out
+}
+
+function makeArray(size, seed, preset) {
+  const r = rng(seed)
+  switch (preset) {
+    case 'sorted': {
+      const out = []
+      for (let i = 0; i < size; i++) {
+        out.push(Math.round(3 + (i / Math.max(1, size - 1)) * (MAX_VALUE - 3)))
+      }
+      return out
+    }
+    case 'reversed': {
+      const out = []
+      for (let i = 0; i < size; i++) {
+        out.push(Math.round(3 + ((size - 1 - i) / Math.max(1, size - 1)) * (MAX_VALUE - 3)))
+      }
+      return out
+    }
+    case 'few': {
+      // Only 4 distinct values — exposes pivot weakness in quicksort and
+      // is also a fun visual case for stable sorts.
+      const buckets = [20, 45, 70, 95]
+      const out = []
+      for (let i = 0; i < size; i++) out.push(buckets[Math.floor(r() * 4)])
+      return out
+    }
+    case 'random':
+    default: {
+      const out = []
+      for (let i = 0; i < size; i++) {
+        out.push(3 + Math.floor(r() * (MAX_VALUE - 3)))
+      }
+      return out
+    }
+  }
 }
 
 export default function Sorting() {
@@ -43,8 +86,12 @@ export default function Sorting() {
 
   const [size, setSize] = useState(20)
   const [seed, setSeed] = useState(1)
+  const [preset, setPreset] = useState('random')
 
-  const input = useMemo(() => makeArray(size, seed), [size, seed])
+  const input = useMemo(
+    () => makeArray(size, seed, preset),
+    [size, seed, preset]
+  )
   const steps = useMemo(
     () => (algorithm ? algorithm.fn(input) : []),
     [algorithm, input]
@@ -90,9 +137,34 @@ export default function Sorting() {
             />
             <span className="text-ink w-6 text-right">{size}</span>
           </label>
+
+          <div className="flex items-center gap-2 font-mono text-xs text-muted">
+            <span>input</span>
+            {PRESETS.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setPreset(p.id)}
+                className={`px-2 py-1 border border-ink transition-colors ${
+                  p.id === preset
+                    ? 'bg-ink text-bg'
+                    : 'bg-transparent text-ink hover:bg-ink hover:text-bg'
+                }`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
         </div>
       }
     >
+      <div className="mb-3 flex justify-end">
+        <StatsBadge
+          steps={steps}
+          index={playback.index}
+          fields={SORTING_FIELDS}
+        />
+      </div>
       <SortVisualizer step={playback.step} max={MAX_VALUE} />
     </AlgorithmPage>
   )

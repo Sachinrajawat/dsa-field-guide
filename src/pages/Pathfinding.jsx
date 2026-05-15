@@ -3,10 +3,13 @@ import { useNavigate, useParams, Navigate } from 'react-router-dom'
 
 import { bfs, bfsMeta } from '../algorithms/pathfinding/bfs.js'
 import { dijkstra, dijkstraMeta } from '../algorithms/pathfinding/dijkstra.js'
+import { generateMaze } from '../algorithms/pathfinding/maze.js'
 
 import { usePlayback } from '../hooks/usePlayback.js'
 import AlgorithmPage from '../components/AlgorithmPage.jsx'
 import GridVisualizer from '../components/GridVisualizer.jsx'
+import StatsBadge from '../components/StatsBadge.jsx'
+import { PATHFINDING_FIELDS } from '../components/StatsBadge.fields.js'
 
 const ROWS = 14
 const COLS = 22
@@ -109,12 +112,41 @@ export default function Pathfinding() {
             ))}
           </div>
 
+          <button
+            type="button"
+            onClick={() =>
+              setGrid(generateMaze(ROWS, COLS, START, END, Date.now()))
+            }
+            className="ink-btn"
+          >
+            Generate maze
+          </button>
+
           <p className="font-mono text-[11px] text-muted">
             click + drag to paint walls{algorithm.supportsWeight ? ' or weights' : ''}
           </p>
         </div>
       }
     >
+      <div className="mb-3 flex flex-wrap justify-end gap-2">
+        <StatsBadge
+          steps={steps}
+          index={playback.index}
+          fields={PATHFINDING_FIELDS}
+        />
+        {playback.step?.path && (
+          <span className="ink-tag tabular-nums">
+            <span className="text-muted mr-1.5">path</span>
+            <span className="text-ink">{playback.step.path.length}</span>
+          </span>
+        )}
+        {playback.step?.cost != null && (
+          <span className="ink-tag tabular-nums">
+            <span className="text-muted mr-1.5">cost</span>
+            <span className="text-ink">{playback.step.cost}</span>
+          </span>
+        )}
+      </div>
       <GridVisualizer
         grid={grid}
         start={START}

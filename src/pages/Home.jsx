@@ -17,6 +17,11 @@ const TOC = [
         complexity: 'O(n log n) avg',
         to: '/sorting/quick',
       },
+      {
+        name: 'Race three sorts',
+        complexity: 'side-by-side',
+        to: '/sorting/race',
+      },
     ],
   },
   {

@@ -72,8 +72,17 @@ export function dijkstra(grid, start, end) {
   const pq = new MinHeap()
   pq.push([0, start])
 
+  const L = { POP: 4, SETTLE: 6, NEIGHBOR: 8, RELAX: 11, PUSH: 14 }
+
   const steps = [
-    { type: 'init', current: null, visited: [], frontier: [startKey], path: null },
+    {
+      type: 'init',
+      current: null,
+      visited: [],
+      frontier: [startKey],
+      path: null,
+      line: -1,
+    },
   ]
 
   let found = false
@@ -91,6 +100,7 @@ export function dijkstra(grid, start, end) {
       visited: [...visitedOrder],
       frontier,
       path: null,
+      line: L.SETTLE,
     })
 
     if (k === endKey) {
@@ -130,6 +140,7 @@ export function dijkstra(grid, start, end) {
       frontier: [],
       path,
       cost: dist.get(endKey),
+      line: -1,
     })
   } else {
     steps.push({
@@ -138,6 +149,7 @@ export function dijkstra(grid, start, end) {
       visited: [...visitedOrder],
       frontier: [],
       path: null,
+      line: -1,
     })
   }
 
