@@ -3,8 +3,8 @@
 A quiet, single-page React app that visualizes classic algorithms — sorted,
 searched, traversed — with playback controls. Frontend-only.
 
+> Live demo: <https://dsa-field-guide.vercel.app>
 > Repo: <https://github.com/Sachinrajawat/dsa-field-guide>
-> Live demo: _add the Vercel URL after deploy_
 
 ## What's inside
 
